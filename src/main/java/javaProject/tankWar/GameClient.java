@@ -8,13 +8,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class GameClient extends JComponent {
+
+    private static final GameClient INSTANCE = new GameClient();
+
+    public static GameClient getInstance(){
+        return INSTANCE;
+    }
 
     private Tank playerTank;
 
     private List<Tank> enemyTank;
 
     private List<Walls> walls;
+
+    public List<Walls> getWalls() {
+        return walls;
+    }
+
+    public List<Tank> getEnemyTank() {
+        return enemyTank;
+    }
 
     public GameClient() {
         this.playerTank = new Tank(400, 100, Direction.DOWN);

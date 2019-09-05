@@ -98,9 +98,44 @@ public class Tank {
     }
 
     void draw(Graphics g) {
+        int oldX = x, oldY = y;
         this.determineDirection();
         this.move();
+        //tank can't move out of the display;
+        if(x<0) x=0;
+        else if(x>800 - this.getImage().getWidth(null)) x=800 - this.getImage().getWidth(null);
+        if (y<0) y=0;
+        else if (y>600 - this.getImage().getHeight(null)) y=600 - this.getImage().getHeight(null) ;
+
+        //tank can't move through the wall
+
+        Rectangle tankRec = this.getRectan();
+        for(Walls wall:GameClient.getInstance().getWalls()){
+
+            if(tankRec.intersects(wall.getRectangle())){
+                x = oldX;
+                y = oldY;
+                break;
+            }
+
+        }
+
+        // tank can't move through enemy tank
+        for(Tank eTank: GameClient.getInstance().getEnemyTank()){
+
+            if(tankRec.intersects(eTank.getRectan())){
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
+
         g.drawImage(this.getImage(), this.x, this.y, null);
+    }
+
+    public Rectangle getRectan(){
+        return new Rectangle(x,y,this.getImage().getWidth(null),this.getImage().getHeight(null));
     }
 
     private boolean up, down, left, right, stop;
