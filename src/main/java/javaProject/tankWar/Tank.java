@@ -13,6 +13,29 @@ public class Tank {
     private int y;
     private Direction direction;
     private boolean enemy;
+    private boolean live = true;
+    private int HP = 100;
+
+    int getHP() {
+        return HP;
+    }
+
+    void setHP(int HP) {
+        this.HP = HP;
+    }
+
+    boolean isLive() {
+        return live;
+    }
+
+    void setLive(boolean live) {
+        this.live = live;
+    }
+
+    public boolean isEnemy() {
+        return enemy;
+    }
+
     public static final int SPEED = 5;
 
     public void setX(int x) {
@@ -31,13 +54,13 @@ public class Tank {
         return y;
     }
 
-    public Tank(int x, int y, Direction direction) {
+    Tank(int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
     }
 
-    public Tank(int x, int y, boolean enemy, Direction direction) {
+    Tank(int x, int y, boolean enemy, Direction direction) {
         this.x = x;
         this.y = y;
         this.enemy = enemy;
@@ -93,7 +116,7 @@ public class Tank {
         g.drawImage(this.getImage(), this.x, this.y, null);
     }
 
-    public Rectangle getRectan(){
+    Rectangle getRectan(){
         return new Rectangle(x,y,this.getImage().getWidth(null),this.getImage().getHeight(null));
     }
 

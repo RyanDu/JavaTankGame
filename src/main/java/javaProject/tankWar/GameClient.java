@@ -18,6 +18,9 @@ public class GameClient extends JComponent {
     }
 
     private Tank playerTank;
+    public Tank getPlayerTank() {
+        return playerTank;
+    }
 
     private List<Tank> enemyTank;
 
@@ -27,6 +30,9 @@ public class GameClient extends JComponent {
 
     public List<Missile> getMissiles() {
         return missiles;
+    }
+    void removeMissile(Missile missile){
+        missiles.remove(missile);
     }
 
     public List<Walls> getWalls() {
@@ -60,12 +66,14 @@ public class GameClient extends JComponent {
         g.setColor(Color.BLACK);
         g.fillRect(0,0,800,800);
         playerTank.draw(g);
+        enemyTank.removeIf(tank -> !tank.isLive());
         for(Tank tank: enemyTank){
             tank.draw(g);
         }
         for(Walls wall: walls){
             wall.draw(g);
         }
+        missiles.removeIf(missile -> !missile.isLive());
         for(Missile missile: missiles){
             missile.draw(g);
         }
