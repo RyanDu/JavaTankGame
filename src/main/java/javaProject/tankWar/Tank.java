@@ -5,14 +5,15 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Random;
-
 import javafx.scene.media.*;
+
 
 public class Tank {
     private int x;
     private int y;
     private Direction direction;
     private boolean enemy;
+    public static final int SPEED = 5;
 
     public void setX(int x) {
         this.x = x;
@@ -46,36 +47,8 @@ public class Tank {
 
     void move() {
         if (this.stop) return;
-        switch (direction) {
-            case UP:
-                y -= 5;
-                break;
-            case DOWN:
-                y += 5;
-                break;
-            case LEFT:
-                x -= 5;
-                break;
-            case RIGHT:
-                x += 5;
-                break;
-            case LEFT_UP:
-                y -= 5;
-                x -= 5;
-                break;
-            case RIGHT_UP:
-                y -= 5;
-                x += 5;
-                break;
-            case LEFT_DOWN:
-                y += 5;
-                x -= 5;
-                break;
-            case RIGHT_DOWN:
-                y += 5;
-                x += 5;
-                break;
-        }
+        x += direction.xFactor*SPEED;
+        y += direction.yFactor*SPEED;
     }
 
     private Image getImage() {
