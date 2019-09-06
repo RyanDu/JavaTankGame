@@ -3,6 +3,8 @@ package javaProject.tankWar;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import javafx.scene.media.*;
 
 public class Tank {
     private int x;
@@ -74,7 +76,7 @@ public class Tank {
         }
     }
 
-    Image getImage() {
+    private Image getImage() {
         String prefix = enemy ? "e" : "";
         switch (direction) {
             case UP:
@@ -154,7 +156,21 @@ public class Tank {
             case KeyEvent.VK_RIGHT:
                 right = true;
                 break;
+            case KeyEvent.VK_CONTROL:
+                fire();
+                break;
         }
+    }
+
+    private void fire(){
+        Missile missile = new Missile(x+this.getImage().getWidth(null)/2-6,
+                y+this.getImage().getHeight(null)/2-6,enemy,direction);
+        GameClient.getInstance().getMissiles().add(missile);
+        //Sound play
+        String musicFile = "assets/audios/shoot.wav";
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
 
     private void determineDirection() {

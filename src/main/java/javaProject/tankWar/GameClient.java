@@ -23,6 +23,12 @@ public class GameClient extends JComponent {
 
     private List<Walls> walls;
 
+    private List<Missile> missiles;
+
+    public List<Missile> getMissiles() {
+        return missiles;
+    }
+
     public List<Walls> getWalls() {
         return walls;
     }
@@ -34,6 +40,7 @@ public class GameClient extends JComponent {
     public GameClient() {
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.enemyTank = new ArrayList<>(12);
+        this.missiles = new ArrayList<>();
         this.walls = Arrays.asList(
                 new Walls(200,140,true,15),
                 new Walls(200,540,true,15),
@@ -59,9 +66,14 @@ public class GameClient extends JComponent {
         for(Walls wall: walls){
             wall.draw(g);
         }
+        for(Missile missile: missiles){
+            missile.draw(g);
+        }
     }
 
     public static void main(String[] args) {
+
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
 
         JFrame frame = new JFrame();
         //title bar
@@ -70,7 +82,7 @@ public class GameClient extends JComponent {
 //        frame.setIconImage(new ImageIcon("assets/images/tankD.gif").getImage());  // windows user could see icon
 
         // display configuration
-        GameClient client = new GameClient();
+        GameClient client = GameClient.getInstance();
         client.repaint();
         frame.add(client);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
