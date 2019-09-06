@@ -19,25 +19,7 @@ public class Missile {
     }
 
     Image getImage(){
-        switch (direction) {
-            case UP:
-                return new ImageIcon("assets/images/missileU.gif").getImage();
-            case DOWN:
-                return new ImageIcon("assets/images/missileD.gif").getImage();
-            case LEFT:
-                return new ImageIcon("assets/images/missileL.gif").getImage();
-            case RIGHT:
-                return new ImageIcon("assets/images/missileR.gif").getImage();
-            case UPLEFT:
-                return new ImageIcon("assets/images/missileLU.gif").getImage();
-            case UPRIGHT:
-                return new ImageIcon("assets/images/missileRU.gif").getImage();
-            case DOWNLEFT:
-                return new ImageIcon("assets/images/missileLD.gif").getImage();
-            case DOWNRIGHT:
-                return new ImageIcon("assets/images/missileRD.gif").getImage();
-        }
-        return null;
+        return direction.getImage("missile");
     }
 
     private void move(){
@@ -54,19 +36,19 @@ public class Missile {
             case RIGHT:
                 x += SPEED;
                 break;
-            case UPLEFT:
+            case LEFT_UP:
                 y -= SPEED;
                 x -= SPEED;
                 break;
-            case UPRIGHT:
+            case RIGHT_UP:
                 y -= SPEED;
                 x += SPEED;
                 break;
-            case DOWNLEFT:
+            case LEFT_DOWN:
                 y += SPEED;
                 x -= SPEED;
                 break;
-            case DOWNRIGHT:
+            case RIGHT_DOWN:
                 y += SPEED;
                 x += SPEED;
                 break;

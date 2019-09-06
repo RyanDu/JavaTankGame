@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Random;
+
 import javafx.scene.media.*;
 
 public class Tank {
@@ -57,19 +59,19 @@ public class Tank {
             case RIGHT:
                 x += 5;
                 break;
-            case UPLEFT:
+            case LEFT_UP:
                 y -= 5;
                 x -= 5;
                 break;
-            case UPRIGHT:
+            case RIGHT_UP:
                 y -= 5;
                 x += 5;
                 break;
-            case DOWNLEFT:
+            case LEFT_DOWN:
                 y += 5;
                 x -= 5;
                 break;
-            case DOWNRIGHT:
+            case RIGHT_DOWN:
                 y += 5;
                 x += 5;
                 break;
@@ -78,25 +80,7 @@ public class Tank {
 
     private Image getImage() {
         String prefix = enemy ? "e" : "";
-        switch (direction) {
-            case UP:
-                return new ImageIcon("assets/images/"+prefix+"tankU.gif").getImage();
-            case DOWN:
-                return new ImageIcon("assets/images/"+prefix+"tankD.gif").getImage();
-            case LEFT:
-                return new ImageIcon("assets/images/"+prefix+"tankL.gif").getImage();
-            case RIGHT:
-                return new ImageIcon("assets/images/"+prefix+"tankR.gif").getImage();
-            case UPLEFT:
-                return new ImageIcon("assets/images/"+prefix+"tankLU.gif").getImage();
-            case UPRIGHT:
-                return new ImageIcon("assets/images/"+prefix+"tankRU.gif").getImage();
-            case DOWNLEFT:
-                return new ImageIcon("assets/images/"+prefix+"tankLD.gif").getImage();
-            case DOWNRIGHT:
-                return new ImageIcon("assets/images/"+prefix+"tankRD.gif").getImage();
-        }
-        return null;
+        return direction.getImage(prefix+"tank");
     }
 
     void draw(Graphics g) {
@@ -159,6 +143,9 @@ public class Tank {
             case KeyEvent.VK_CONTROL:
                 fire();
                 break;
+            case KeyEvent.VK_A:
+                superFire();
+                break;
         }
     }
 
@@ -168,6 +155,21 @@ public class Tank {
         GameClient.getInstance().getMissiles().add(missile);
         //Sound play
         String musicFile = "assets/audios/shoot.wav";
+        playAudio(musicFile);
+    }
+
+    private void superFire(){
+        for(Direction direction: Direction.values()) {
+            Missile missile = new Missile(x + this.getImage().getWidth(null) / 2 - 6,
+                    y + this.getImage().getHeight(null) / 2 - 6, enemy, direction);
+            GameClient.getInstance().getMissiles().add(missile);
+        }
+        //Sound play
+        String musicFile = new Random().nextBoolean() ? "assets/audios/supershoot.wav": "assets/audios/supershoot.aiff";
+        playAudio(musicFile);
+    }
+// play sound
+    private void playAudio(String musicFile) {
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
@@ -187,13 +189,13 @@ public class Tank {
             } else if (!up && !down && !left && right) {
                 this.direction = Direction.RIGHT;
             } else if (up && !down && left && !right) {
-                this.direction = Direction.UPLEFT;
+                this.direction = Direction.LEFT_UP;
             } else if (up && !down && !left && right) {
-                this.direction = Direction.UPRIGHT;
+                this.direction = Direction.RIGHT_UP;
             } else if (!up && down && left && !right) {
-                this.direction = Direction.DOWNLEFT;
+                this.direction = Direction.LEFT_DOWN;
             } else if (!up && down && !left && right) {
-                this.direction = Direction.DOWNRIGHT;
+                this.direction = Direction.RIGHT_DOWN;
             }
             this.stop = false;
         }
