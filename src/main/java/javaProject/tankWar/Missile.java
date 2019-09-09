@@ -1,7 +1,11 @@
 package javaProject.tankWar;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Missile {
 
@@ -53,6 +57,7 @@ public class Missile {
             //check missile shoot to user tank
             Tank playertank = GameClient.getInstance().getPlayerTank();
             if(missileRec.intersects(playertank.getRectan())){
+                addExplosion();
                 playertank.setHP(playertank.getHP()-20);
                 if(playertank.getHP()<=0){
                     playertank.setLive(false);
@@ -63,6 +68,7 @@ public class Missile {
             //check missle shoot to enemy tank
             for(Tank tank:GameClient.getInstance().getEnemyTank()){
                 if(missileRec.intersects(tank.getRectan())){
+                    addExplosion();
                     tank.setLive(false);
                     this.setLive(false);
                     break;
@@ -70,6 +76,15 @@ public class Missile {
             }
         }
         g.drawImage(getImage(),x,y,null);
+    }
+    private void addExplosion(){
+        GameClient.getInstance().addExplosion(new Explosion(x,y));
+        playAudio("assets/audios/explode.wav");
+    }
+    private void playAudio(String musicFile) {
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
     Rectangle getRec(){
         return new Rectangle(x,y,this.getImage().getWidth(null),this.getImage().getHeight(null));
