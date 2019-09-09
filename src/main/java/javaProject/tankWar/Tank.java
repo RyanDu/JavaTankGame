@@ -14,7 +14,11 @@ public class Tank {
     private Direction direction;
     private boolean enemy;
     private boolean live = true;
-    private int HP = 100;
+    private static final int Max_HP = 100;
+    private int HP = Max_HP;
+    boolean isDying(){
+        return this.getHP() <= Max_HP*0.2;
+    }
 
     int getHP() {
         return HP;
@@ -122,19 +126,41 @@ public class Tank {
         }
 
         if(!enemy){
+            HealthPack healthPack = GameClient.getInstance().getHealthPack();
+            if(healthPack.isLive() && tankRec.intersects(healthPack.getRectangle())){
+                this.HP = Max_HP;
+                playAudio("assets/audios/revive.wav");
+                GameClient.getInstance().getHealthPack().setLive(false);
+            }
+            // HP display
             g.setColor(Color.white);
             g.fillRect(x,y-10,this.getImage().getWidth(null),10);
 
             g.setColor(Color.red);
-            int width = HP * this.getImage().getWidth(null)/100;
+            int width = HP * this.getImage().getWidth(null)/Max_HP;
             g.fillRect(x,y-10,width,10);
+            // pet camel
+            Image pet = new ImageIcon("assets/images/pet-camel.gif").getImage();
+            g.drawImage(pet,this.x-pet.getWidth(null)-4,this.y,null);
         }
 
         g.drawImage(this.getImage(), this.x, this.y, null);
     }
 
+    private static final int DISTANCE_TO_PET = 4;
+    // Rec to check if hit the wall
     Rectangle getRectan(){
-        return new Rectangle(x,y,this.getImage().getWidth(null),this.getImage().getHeight(null));
+        if(enemy) {
+            return new Rectangle(x, y, this.getImage().getWidth(null), this.getImage().getHeight(null));
+        }else{
+            Image pet = new ImageIcon("assets/images/pet-camel.gif").getImage();
+            int delta = pet.getWidth(null)+DISTANCE_TO_PET;
+            return new Rectangle(x-delta,y,this.getImage().getWidth(null)+delta,this.getImage().getHeight(null));
+        }
+    }
+    // Rectangle that used to check the hit with bullets
+    Rectangle getRecHit(){
+        return new Rectangle(x, y, this.getImage().getWidth(null), this.getImage().getHeight(null));
     }
 
     private boolean up, down, left, right, stop;

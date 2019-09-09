@@ -1,19 +1,29 @@
 package javaProject.tankWar;
 
+import com.alibaba.fastjson.JSON;
+import com.sun.javafx.reflect.FieldUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.io.*;
 
 
 public class GameClient extends JComponent {
 
     private static final GameClient INSTANCE = new GameClient();
+    public static final String GAME_SAV = "game.sav";
 
     public static GameClient getInstance(){
         return INSTANCE;
@@ -29,6 +39,12 @@ public class GameClient extends JComponent {
     private AtomicInteger enemyKilled = new AtomicInteger(0);
 
     private List<Walls> walls;
+
+    private HealthPack healthPack;
+
+    public HealthPack getHealthPack() {
+        return healthPack;
+    }
 
     private List<Missile> missiles;
 
@@ -60,9 +76,10 @@ public class GameClient extends JComponent {
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new ArrayList<>();
+        this.healthPack = new HealthPack(400,250);
         this.walls = Arrays.asList(
-                new Walls(200,140,true,15),
-                new Walls(200,540,true,15),
+                new Walls(200,140,true,12),
+                new Walls(200,540,true,12),
                 new Walls(100,160,false,12),
                 new Walls(700,160,false,12)
         );
@@ -97,9 +114,16 @@ public class GameClient extends JComponent {
             g.drawString("Player Tank HP: "+playerTank.getHP(),10,90);
             g.drawString("Enemy left: "+enemyTank.size(),10,110);
             g.drawString("Enemy killed: "+enemyKilled.get(),10,130);
+            g.drawImage(new ImageIcon("assets/images/tree.png").getImage(),720,10,null);
+            g.drawImage(new ImageIcon("assets/images/tree.png").getImage(),10,520,null);
 
             int count = enemyTank.size();
-
+            if(playerTank.isDying()&&new Random().nextInt(4) < 2){
+                healthPack.setLive(true);
+            }
+            if(healthPack.isLive()){
+                healthPack.draw(g);
+            }
 
             playerTank.draw(g);
             enemyTank.removeIf(tank -> !tank.isLive());
@@ -135,9 +159,21 @@ public class GameClient extends JComponent {
 //        frame.setIconImage(new ImageIcon("assets/images/tankD.gif").getImage());  // windows user could see icon
 
         // display configuration
-        GameClient client = GameClient.getInstance();
-        client.repaint();
+        final GameClient client = GameClient.getInstance();
         frame.add(client);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    client.save();
+                    System.exit(0);
+                }catch (IOException ex){
+                    JOptionPane.showMessageDialog(null,"Failed to save the game",
+                            "Oops! Error occured",JOptionPane.ERROR_MESSAGE);
+                }
+                System.exit(4);
+            }
+        });
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -171,6 +207,19 @@ public class GameClient extends JComponent {
         }
 
     }
+    private void load(){
+        File file = new File(GAME_SAV);
+        if(file.exists() && file.isFile()){
+            String json = FileUtils.readFileToString(file,StandardCharsets,UTF_8);
+        }
+    }
+
+    private void save() throws IOException{
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(GAME_SAV)))){
+            out.println(JSON.toJSONString(playerTank,true));
+        }
+    }
+
     void restart(){
         if(!playerTank.isLive()){
             playerTank = new Tank(400, 100, Direction.DOWN);
