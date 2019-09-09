@@ -35,6 +35,8 @@ public class Tank {
     public boolean isEnemy() {
         return enemy;
     }
+    private final Random random = new Random();
+    private int step = random.nextInt(12) + 3;
 
     public static final int SPEED = 5;
 
@@ -81,7 +83,9 @@ public class Tank {
 
     void draw(Graphics g) {
         int oldX = x, oldY = y;
-        this.determineDirection();
+        if(!this.enemy){
+            this.determineDirection();
+        }
         this.move();
         //tank can't move out of the display;
         if(x<0) x=0;
@@ -105,13 +109,26 @@ public class Tank {
         // tank can't move through enemy tank
         for(Tank eTank: GameClient.getInstance().getEnemyTank()){
 
-            if(tankRec.intersects(eTank.getRectan())){
+            if(eTank!=this &&tankRec.intersects(eTank.getRectan())){
                 x = oldX;
                 y = oldY;
                 break;
             }
         }
 
+        if(this.enemy && tankRec.intersects(GameClient.getInstance().getPlayerTank().getRectan())){
+            x = oldX;
+            y = oldY;
+        }
+
+        if(!enemy){
+            g.setColor(Color.white);
+            g.fillRect(x,y-10,this.getImage().getWidth(null),10);
+
+            g.setColor(Color.red);
+            int width = HP * this.getImage().getWidth(null)/100;
+            g.fillRect(x,y-10,width,10);
+        }
 
         g.drawImage(this.getImage(), this.x, this.y, null);
     }
@@ -142,6 +159,8 @@ public class Tank {
             case KeyEvent.VK_A:
                 superFire();
                 break;
+            case KeyEvent.VK_F2:
+                GameClient.getInstance().restart();
         }
     }
 
@@ -164,11 +183,23 @@ public class Tank {
         String musicFile = new Random().nextBoolean() ? "assets/audios/supershoot.wav": "assets/audios/supershoot.aiff";
         playAudio(musicFile);
     }
-// play sound
+    // play sound
     private void playAudio(String musicFile) {
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
+    }
+    // Make tanks act randomly
+    void actRandomly(){
+        Direction[] directions = Direction.values();
+        if(step == 0){
+            step = random.nextInt(12) +3;
+            this.direction = directions[random.nextInt(8)];
+            if(random.nextBoolean()){
+                this.fire();
+            }
+        }
+        step--;
     }
 
     private void determineDirection() {
