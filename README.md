@@ -1,7 +1,7 @@
 # JavaTankGame
 A simple Java tank game to simulate a whole developing process
 
-![image](https://github.com/RyanDu/JavaTankGame/assets/assets/TankGame.jpg)
+![image](https://github.com/RyanDu/JavaTankGame/blob/master/assets/assets/TankGame.jpg)
 
 ## Control
 - Use Arrow Keys to control directions.
